@@ -7,11 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-/**
- * View Model to keep a reference to the word repository and
- * an up-to-date list of all words.
- */
-
 public class OptionChangeViewModel extends AndroidViewModel {
 
     private OptionChangeRepository mRepository;

@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start the foreground service
         Context context = getApplicationContext();
         Intent intent = new Intent(context, OptionsCheckerService.class);
         context.startForegroundService(intent);
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity{
                 optionChangesText.add(changeText);
 
                 try {
-                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.settingsBefore).toString(2));
-                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.settingsAfter).toString(2));
+                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.getSettingsBefore()).toString(2));
+                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.getSettingsAfter()).toString(2));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
