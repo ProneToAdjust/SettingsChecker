@@ -17,6 +17,8 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +49,10 @@ public class OptionsCheckerService extends Service  implements OptionsCheckerObs
         add(Settings.Global.WIFI_MOBILE_DATA_TRANSITION_WAKELOCK_TIMEOUT_MS);
         add(Settings.Global.WAIT_FOR_DEBUGGER);
         add(Settings.Global.WIFI_ON);
+        // deprecated settings from API 26 and above
+        add(Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON);
+        add(Settings.Global.WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY);
+        add(Settings.Global.WIFI_NUM_OPEN_NETWORKS_KEPT);
     }};
 
     @Override
@@ -61,12 +67,13 @@ public class OptionsCheckerService extends Service  implements OptionsCheckerObs
     }
 
     private void startForeground() {
-        NotificationChannel channel = new NotificationChannel("CHANNEL_ID", "DevOptionsCheckerChannel", NotificationManager.IMPORTANCE_MIN);
+        // Create the NotificationChannel for foreground service
+        NotificationChannel channel = new NotificationChannel("OptionsCheckerChannelId", "OptionsCheckerChannel", NotificationManager.IMPORTANCE_MIN);
         channel.setDescription("DevOptionsCheckerChannel");
 
         notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
-        Notification notification = new NotificationCompat.Builder(this, "CHANNEL_ID").build();
+        Notification notification = new NotificationCompat.Builder(this, "OptionsCheckerChannelId").build();
 
         try {
             int type = 0;
@@ -102,17 +109,22 @@ public class OptionsCheckerService extends Service  implements OptionsCheckerObs
         super.onDestroy();
     }
 
-    private void monitorSettings() {
+    private void checkSettings() {
         Map<String, String> currentSettings = getDeveloperOptions(this);
         if (!currentSettings.equals(lastReading)) {
 //            Log.d("MainActivity", currentSettings.toString());
             // get what changed
             for (String setting : settingsToMonitor) {
                 if (!(currentSettings.get(setting).equals(lastReading.get(setting)))) {
-                    String change = setting + " changed from " + lastReading.get(setting) + " to " + currentSettings.get(setting);
+                    String valueBefore = lastReading.get(setting);
+                    String valueAfter = currentSettings.get(setting);
+                    String change = setting + " changed from " + valueBefore + " to " + valueAfter;
 //                    Log.d("MainActivity", change);
 
-                    OptionChange optionChange = new OptionChange(change, System.currentTimeMillis());
+                    JSONObject lastReadingJson = new JSONObject(this.lastReading);
+                    JSONObject currentSettingsJson = new JSONObject(currentSettings);
+
+                    OptionChange optionChange = new OptionChange(lastReadingJson.toString(), currentSettingsJson.toString(), setting, currentSettings.get(setting), lastReading.get(setting), System.currentTimeMillis());
                     OptionChangeDatabase.databaseWriteExecutor.execute(() -> {
                         OptionChangeDatabase db = OptionChangeDatabase.getDatabase(getApplicationContext());
                         OptionChangeDao dao = db.optionChangeDao();
@@ -137,6 +149,6 @@ public class OptionsCheckerService extends Service  implements OptionsCheckerObs
 
     @Override
     public void onSettingsChanged() {
-        monitorSettings();
+        checkSettings();
     }
 }

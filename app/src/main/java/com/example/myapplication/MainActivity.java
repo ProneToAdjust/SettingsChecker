@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,9 +34,22 @@ public class MainActivity extends AppCompatActivity{
 
         LiveData<List<OptionChange>> allOptionChanges = optionChangeViewModel.getAllOptionChanges();
         allOptionChanges.observe(this, optionChanges -> {
+            TextView textView = findViewById(R.id.textView);
+            ArrayList<String> optionChangesText = new ArrayList<>();
             for (OptionChange optionChange : optionChanges) {
-                Log.d("OptionChange", "onCreate: " + optionChange.getChange() + " " + new Date(optionChange.getTimestamp()).toString());
+                String change = optionChange.getSettingChanged() + " changed to " + optionChange.getSettingChangedTo() + " from " + optionChange.getSettingChangedFrom();
+                String changeText = "onCreate: " + change + " on " + new Date(optionChange.getTimestamp());
+                Log.d("OptionChange", changeText);
+                optionChangesText.add(changeText);
+
+                try {
+                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.settingsBefore).toString(2));
+                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.settingsAfter).toString(2));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
+            textView.setText(String.join("\n", optionChangesText));
         });
     }
 

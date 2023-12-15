@@ -1,28 +1,8 @@
 package com.example.myapplication;
 
-/*
- * Copyright (C) 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * A basic class representing an entity that is a row in a one-column database table.
@@ -41,23 +21,53 @@ public class OptionChange {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    @ColumnInfo(name = "change")
-    public String change;
+    @ColumnInfo(name = "settings_before")
+    public String settingsBefore;
+
+    @ColumnInfo(name = "settings_after")
+    public String settingsAfter;
+
+    @ColumnInfo(name = "setting_changed")
+    public String settingChanged;
+
+    @ColumnInfo(name = "setting_changed_to")
+    public String settingChangedTo;
+
+    @ColumnInfo(name = "setting_changed_from")
+    public String settingChangedFrom;
 
     @ColumnInfo(name = "timestamp")
     public Long timestamp;
 
-    public OptionChange(String change, Long timestamp) {
-        this.change = change;
+    public OptionChange(String settingsBefore, String settingsAfter, String settingChanged, String settingChangedTo, String settingChangedFrom, Long timestamp) {
+        this.settingsBefore = settingsBefore;
+        this.settingsAfter = settingsAfter;
+        this.settingChanged = settingChanged;
+        this.settingChangedTo = settingChangedTo;
+        this.settingChangedFrom = settingChangedFrom;
         this.timestamp = timestamp;
     }
 
-    @NonNull
-    public String getChange() {
-        return this.change;
+    public String getSettingsBefore() {
+        return settingsBefore;
     }
 
-    @NonNull
+    public String getSettingsAfter() {
+        return settingsAfter;
+    }
+
+    public String getSettingChanged() {
+        return settingChanged;
+    }
+
+    public String getSettingChangedTo() {
+        return settingChangedTo;
+    }
+
+    public String getSettingChangedFrom() {
+        return settingChangedFrom;
+    }
+
     public Long getTimestamp() {
         return this.timestamp;
     }
