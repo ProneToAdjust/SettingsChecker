@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "option_change_table")
+@Entity(tableName = "setting_change_table")
 
-public class OptionChange {
+public class SettingChange {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
@@ -28,7 +28,7 @@ public class OptionChange {
     @ColumnInfo(name = "timestamp")
     public Long timestamp;
 
-    public OptionChange(String settingsBefore, String settingsAfter, String settingChanged, String settingChangedTo, String settingChangedFrom, Long timestamp) {
+    public SettingChange(String settingsBefore, String settingsAfter, String settingChanged, String settingChangedTo, String settingChangedFrom, Long timestamp) {
         this.settingsBefore = settingsBefore;
         this.settingsAfter = settingsAfter;
         this.settingChanged = settingChanged;

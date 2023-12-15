@@ -11,23 +11,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {OptionChange.class}, version = 1, exportSchema = false)
-abstract class OptionChangeDatabase extends RoomDatabase {
+@Database(entities = {SettingChange.class}, version = 1, exportSchema = false)
+abstract class SettingChangeDatabase extends RoomDatabase {
 
-    abstract OptionChangeDao optionChangeDao();
+    abstract SettingChangeDao settingChangeDao();
 
     // marking the instance as volatile to ensure atomic access to the variable
-    private static volatile OptionChangeDatabase INSTANCE;
+    private static volatile SettingChangeDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static OptionChangeDatabase getDatabase(final Context context) {
+    static SettingChangeDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (OptionChangeDatabase.class) {
+            synchronized (SettingChangeDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            OptionChangeDatabase.class, "option_change_database")
+                            SettingChangeDatabase.class, "setting_change_database")
                             .addCallback(sRoomDatabaseCallback)
                             .build();
                 }
@@ -44,7 +44,7 @@ abstract class OptionChangeDatabase extends RoomDatabase {
             // Clear the database every time it is created
             // Remove if you want to keep the data
             databaseWriteExecutor.execute(() -> {
-                OptionChangeDao dao = INSTANCE.optionChangeDao();
+                SettingChangeDao dao = INSTANCE.settingChangeDao();
                 dao.deleteAll();
             });
         }

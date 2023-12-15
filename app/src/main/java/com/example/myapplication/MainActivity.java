@@ -19,7 +19,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity{
-    private OptionChangeViewModel optionChangeViewModel;
+    private SettingChangeViewModel settingChangeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,29 +28,29 @@ public class MainActivity extends AppCompatActivity{
 
         // Start the foreground service
         Context context = getApplicationContext();
-        Intent intent = new Intent(context, OptionsCheckerService.class);
+        Intent intent = new Intent(context, SettingCheckerService.class);
         context.startForegroundService(intent);
 
-        optionChangeViewModel = new ViewModelProvider(this).get(OptionChangeViewModel.class);
+        settingChangeViewModel = new ViewModelProvider(this).get(SettingChangeViewModel.class);
 
-        LiveData<List<OptionChange>> allOptionChanges = optionChangeViewModel.getAllOptionChanges();
-        allOptionChanges.observe(this, optionChanges -> {
+        LiveData<List<SettingChange>> allSettingChanges = settingChangeViewModel.getAllSettingChanges();
+        allSettingChanges.observe(this, settingChanges -> {
             TextView textView = findViewById(R.id.textView);
-            ArrayList<String> optionChangesText = new ArrayList<>();
-            for (OptionChange optionChange : optionChanges) {
-                String change = optionChange.getSettingChanged() + " changed to " + optionChange.getSettingChangedTo() + " from " + optionChange.getSettingChangedFrom();
-                String changeText = "onCreate: " + change + " on " + new Date(optionChange.getTimestamp());
-                Log.d("OptionChange", changeText);
-                optionChangesText.add(changeText);
+            ArrayList<String> settingChangesText = new ArrayList<>();
+            for (SettingChange settingChange : settingChanges) {
+                String change = settingChange.getSettingChanged() + " changed to " + settingChange.getSettingChangedTo() + " from " + settingChange.getSettingChangedFrom();
+                String changeText = "onCreate: " + change + " on " + new Date(settingChange.getTimestamp());
+                Log.d("SettingChange", changeText);
+                settingChangesText.add(changeText);
 
                 try {
-                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.getSettingsBefore()).toString(2));
-                    Log.d("OptionChange", "onCreate: " + new JSONObject(optionChange.getSettingsAfter()).toString(2));
+                    Log.d("SettingChange", "onCreate: " + new JSONObject(settingChange.getSettingsBefore()).toString(2));
+                    Log.d("SettingChange", "onCreate: " + new JSONObject(settingChange.getSettingsAfter()).toString(2));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
             }
-            textView.setText(String.join("\n", optionChangesText));
+            textView.setText(String.join("\n", settingChangesText));
         });
     }
 
