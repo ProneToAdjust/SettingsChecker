@@ -22,7 +22,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
     private SettingChangeViewModel settingChangeViewModel;
-    private Button button;
+
+    // Button to toggle stay awake setting to demonstrate third party app changing settings
+    private Button settingToggleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,24 +44,16 @@ public class MainActivity extends AppCompatActivity{
             ArrayList<String> settingChangesText = new ArrayList<>();
             for (SettingChange settingChange : settingChanges) {
                 String change = settingChange.getSettingChanged() + " changed to " + settingChange.getSettingChangedTo() + " from " + settingChange.getSettingChangedFrom();
-                String changeText = "onCreate: " + change + " on " + new Date(settingChange.getTimestamp());
-                Log.d("SettingChange", changeText);
+                String changeText = change + " on " + new Date(settingChange.getTimestamp());
                 settingChangesText.add(changeText);
-
-                try {
-                    Log.d("SettingChange", "onCreate: " + new JSONObject(settingChange.getSettingsBefore()).toString(2));
-                    Log.d("SettingChange", "onCreate: " + new JSONObject(settingChange.getSettingsAfter()).toString(2));
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
             }
             textView.setText(String.join("\n", settingChangesText));
         });
 
-        button=findViewById(R.id.button);
+        settingToggleButton =findViewById(R.id.button);
 
         // On button click toggle stay awake setting
-        button.setOnClickListener(v -> {
+        settingToggleButton.setOnClickListener(v -> {
             boolean stayAwake = Settings.Global.getInt(getContentResolver(), Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0) != 0;
             Settings.Global.putInt(getContentResolver(), Settings.Global.STAY_ON_WHILE_PLUGGED_IN, stayAwake ? 0 : 7);
         });

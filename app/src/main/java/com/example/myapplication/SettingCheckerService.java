@@ -17,6 +17,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -126,11 +127,18 @@ public class SettingCheckerService extends Service  implements SettingCheckerObs
                 if (!(currentSettings.get(setting).equals(lastReading.get(setting)))) {
                     String valueBefore = lastReading.get(setting);
                     String valueAfter = currentSettings.get(setting);
-                    Log.d("SettingChecker", setting + " changed from " + valueBefore + " to " + valueAfter);
 
                     // Convert the settings to JSON for readability
                     JSONObject lastReadingJson = new JSONObject(this.lastReading);
                     JSONObject currentSettingsJson = new JSONObject(currentSettings);
+
+                    Log.d("SettingChange", setting + " changed from " + valueBefore + " to " + valueAfter);
+                    try {
+                        Log.d("SettingsBefore", lastReadingJson.toString(2));
+                        Log.d("SettingsAfter", currentSettingsJson.toString(2));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     // Insert the change into the database
                     SettingChange settingChange = new SettingChange(lastReadingJson.toString(), currentSettingsJson.toString(), setting, currentSettings.get(setting), lastReading.get(setting), System.currentTimeMillis());
