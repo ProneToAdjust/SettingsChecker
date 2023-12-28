@@ -3,7 +3,9 @@ package com.example.myapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
     private SettingChangeViewModel settingChangeViewModel;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,14 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
             textView.setText(String.join("\n", settingChangesText));
+        });
+
+        button=findViewById(R.id.button);
+
+        // On button click toggle stay awake setting
+        button.setOnClickListener(v -> {
+            boolean stayAwake = Settings.Global.getInt(getContentResolver(), Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0) != 0;
+            Settings.Global.putInt(getContentResolver(), Settings.Global.STAY_ON_WHILE_PLUGGED_IN, stayAwake ? 0 : 7);
         });
     }
 
